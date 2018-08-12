@@ -57,8 +57,8 @@ SETTINGS = {
                                               'max_iter': [1000]
                                               }],
                            'find_dt': True,
-                           'parameter_dt': [{   # 'min_samples_split': [100],
-                                             'max_depth': [10]
+                           'parameter_dt': [{
+                                             'max_depth': [3]
                                              }],
                            'save': False,
                            'load': True,

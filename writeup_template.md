@@ -9,14 +9,11 @@ The following part of the README contains a writeup which describes how the vehi
 ## Writeup
 
 [//]: # (Image References)
-[image1]: ./examples/car_not_car.png
-[image2]: ./examples/HOG_example.jpg
-[image3]: ./examples/sliding_windows.jpg
-[image4]: ./examples/sliding_window.jpg
+[test_image1]: ./output_images/test1.jpg
+[test_image2]: ./output_images/test2.jpg
+[test_image3]: ./output_images/test3.jpg
+[test_image5]: ./output_images/test5.jpg
 [image5]: ./examples/bboxes_and_heat.png
-[image6]: ./examples/labels_map.png
-[image7]: ./examples/output_bboxes.png
-[video1]: ./project_video.mp4
 
 ### Goals
 
@@ -35,6 +32,7 @@ The individual steps are the following:
 ### Feature extraction
 
 In the first step the features for the training must be extracted from the labeled data. Beside the provided dataset for the project I also used the Udacity labeled dataset 1 and 2. These datasets do not provide 64x64 labeled images but hole images with bounding boxes and corresponding labels. Therefor 64x64 images patches for each car bounding box have to be extracted. Additionally for each car bounding box I extracted an additional image patch of the same size of the bounding box which does not contain any car. This preparation happens in the file `dataset_tools.py` in the function `prepare_dataset`.
+
 
 After I got all 64x64 car and non-car images the features could be extracted. I used color, histograms of color and histograms of oriented gradients as features. As the color space the YCrCb representation is used.
 
@@ -75,9 +73,11 @@ Here is an example of the result:
 
 #### Training and test set
 
----
-[//]: # (TODO)
----
+For training and testing the labeled data must be splitted into a training and test set. Because the labeled images are taken from a video they can't just be shuffled and splitted. This could result in nearly the same images appear in both sets and therefor the test data is learned in the training.
+
+To avoid this I took the beginning and the ending of the video as test set and the middle part as training set.
+
+This happens in the function `get_data` in `dataset_tools.py`
 
 #### Feature preparation
 
@@ -93,51 +93,58 @@ After getting the features I trained a classifier on them. I tried to find a goo
 
 Using a decision tree instead leaded to a very fast classifier but only with a average precision of 0.94.
 
-In the end it turned out that using `SVC` class was a bad idea. Even when using it only with a nonlinear kernel it was slow. Using the `LinearSVC` instead resulted in a fast an reliable classifier.
+In the end it turned out that using `SVC` class was a bad idea. Even when using it only with a nonlinear kernel it was slow. Using the `LinearSVC` instead resulted in a fast an reliable classifier. The SVM is trained `__create_svm` function in the file `classifier.py`
 
+As an additional classifier I trained a AdaBoost meta classifier with an ensemble of 50 decision trees. This is done in the function `__create_dt`.
 
+The SVM was slightly faster than the decision trees, so I used the decision trees to verify the results from the SVM.
 
+Here are the results for the test errors:
 
-Here are the results:
-
-|         | Precision SVC | Precision DT |
+|         | Precision SVM | Precision DT |
 |:-------:|:-------------:|:-------------:|
 | non-car | 0.96          | 0.96          |
-| car     | 0.99          | 0.96          |
-| average | 0.98          | 0.96          |
-
+| car     | 0.99          | 1.00          |
+| average | 0.98          | 0.98          |
 
 
 
 ### Sliding window search
 
+To get image patches from image which should be labeled I used the sliding window technique. For this I took a frame, cut out a region of interest, calculated its HOG and then slide a window over it. For each window the features are then generated like in the feature extraction.
+
+This is done in the scales 1 and 1.8, so that I can detect cars in different sizes.
+
+In the code this happens in the function `get_features_frame` in the file `features.py`.
+
+
+### Example images of the pipeline
+
+Here are some examples of the test images. All image patched, detected as cars, are drawn as bounding boxes in the lower left image. For each bounding box heat is added to a heatmap. this heatmap could be seen in the lower middle image. After that the heatmap is thresholded and `scipy.ndimage.measurements.label()` is used to label the thresholded heatmap.
+
+Here are the results:
+![alt text][test_image1]
+![alt text][test_image2]
+![alt text][test_image5]
+
+As one can see in the last example there is a false positive in the middle of the street (lower left image). Because of the thresholding of the heatmap this false positive does not appear in the final image.
 
 
 ### Video pipeline
+
+#### Filtering
+
 
 
 ### Combination with lane finding
 
 
+### Discussion
 
 
-#### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
-
-I trained a linear SVM using...
 
 ### Sliding Window Search
 
-#### 1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
-
-I decided to search random window positions at random scales all over the image and came up with this (ok just kidding I didn't actually ;):
-
-![alt text][image3]
-
-#### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
-
-Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
-
-![alt text][image4]
 ---
 
 ### Video Implementation

@@ -23,7 +23,7 @@ def __create_svm(x_train, y_train, parameter):
         p = {}
         for key, item in parameter.items():
             p[key] = item[0]
-            
+
         clf = LinearSVC(**p)
         print("Fit SVM...")
 
@@ -61,7 +61,7 @@ def __create_dt(x_train, y_train, parameter):
         for key, item in parameter.items():
             p[key] = item[0]
         clf = AdaBoostClassifier(base_estimator=DecisionTreeClassifier(**p),
-                                 n_estimators=10)
+                                 n_estimators=50)
         print("Fit DT...")
 
     t1 = time.time()

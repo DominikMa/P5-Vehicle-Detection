@@ -139,8 +139,8 @@ class FrameClassificator():
                             y_dt = 0
                         if y_dt == 1:
                             heat += 0.4
-                            cv2.rectangle(self.frame_boxes, top_left, bottom_right,
-                                          (0, 255, 0), 6)
+                            cv2.rectangle(self.frame_boxes, top_left,
+                                          bottom_right, (0, 255, 0), 6)
                     tp2 = time.time()
                     predicting += tp2-tp1
                     self.heatmap[top_left[1]:bottom_right[1],
