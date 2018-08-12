@@ -120,7 +120,7 @@ This happens in the function `get_data` in `dataset_tools.py`
 Just using the extracted features as they are will lead to a bad result. Therefor the mean over all features is removed and then the features are scaled to unit variance. This is done by fitting a `StandardScaler` on the training data and then transform the training and test data using it.
 
 Next to scaling the features different other preparation steps could be applied.
-For example a SVM with a nonlinear kernel gets really slow on training and predicting when it is trained on a 8412 dimensions feature vector. It needed about 15 seconds to predict 1000 image patches. Because an aim was to run the pipeline in nearly real time this classifier wasn't useful. Therefor I tried reducing the feature dimension by applying a PCA on the data. Interestingly reducing the feature size to only 20 still leads to an average precision of 0.96. Sadly this was only theoretically god because it leads to way too many false positives in the video pipeline, so I dismissed the usage of PCA and just used all features.
+For example a SVM with a nonlinear kernel gets really slow on training and predicting when it is trained on a 8412 dimensions feature vector. It needed about 15 seconds to predict 1000 image patches. Because an aim was to run the pipeline in nearly real time this classifier wasn't useful. Therefor I tried reducing the feature dimension by applying a PCA on the data. Interestingly reducing the feature size to only 20 still leads to an average precision of 0.96. Sadly this was only theoretically good because it leads to way too many false positives in the video pipeline, so I dismissed the usage of PCA and just used all features.
 
 
 ### Classifier training
